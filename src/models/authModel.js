@@ -67,7 +67,7 @@ module.exports = {
     login: (body) => {
         const { email, password } = body
         return new Promise((resolve, reject) => {
-            const queryStr = `SELECT email,name,is_active password FROM tb_user WHERE email = ?`
+            const queryStr = `SELECT email,name,is_active, password FROM tb_user WHERE email = ?`
             db.query(queryStr, email, (err, data) => {
                 if (!err) {
                     if (data[0]) {
