@@ -20,7 +20,7 @@ const upload = multer({
 });
 
 const multiUpload = (req, res, next) => {
-    const uploadMultiple = upload.array("product_img", 5);
+    const uploadMultiple = upload.array("img", 5);
     uploadMultiple(req, res, (err) => {
         if (err) {
             form.error(res, {
@@ -30,7 +30,7 @@ const multiUpload = (req, res, next) => {
         } else {
             let filePath = req.files.map((val) => "/images/" + val.filename)
 
-            req.filePath = filePath.join(',')
+            req.fileImg = filePath.join(',')
             next();
         }
     });
