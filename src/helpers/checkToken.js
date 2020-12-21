@@ -45,7 +45,7 @@ module.exports = {
         } else {
             const token = bearerToken.split(" ")[1]
             const checkBlacklist = new Promise((resolve, reject) => {
-                const queryStr = `SELECT token FROM blacklist_token WHERE token = ?`
+                const queryStr = `SELECT token FROM tb_blacklist_token WHERE token = ?`
                 db.query(queryStr, token, (err, data) => {
                     if (!err) {
                         if (!data[0]) {
