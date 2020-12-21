@@ -4,14 +4,14 @@ const mainRouter = express.Router()
 
 const welcomeRouter = require ('./welcome')
 const authRouter = require ('./authRouter')
-const recipeRouter = require('./recipeRouter')
+const recipeRouter = require ('./recipeRouter')
 
 // const checkToken = require('./../helpers/checkToken')
 
 //MasakIn
 mainRouter.use("/", welcomeRouter)
 mainRouter.use("/auth", authRouter)
-mainRouter.use("/recipes", recipeRouter)
+mainRouter.use("/recipe", recipeRouter)
 
 
 module.exports = mainRouter
