@@ -2,9 +2,9 @@ const db = require("../config/mySQL");
 const form = require("../helpers/form");
 
 module.exports = {
-    searchRecipe : (query,urlQuery, total_result, page, offset, limit) => {
+    searchRecipe : (addQuery,urlQuery, total_result, page, offset, limit) => {
         return new Promise((resolve, reject) => {
-            const qs = `SELECT id_recipe, title, img FROM tb_recipe WHERE title LIKE '%${query.title}%' LIMIT ${limit} OFFSET ${offset} `
+            let qs = `SELECT id_recipe, title, img FROM tb_recipe ` + addQuery + `LIMIT ${limit} OFFSET ${offset} `
             console.log(urlQuery)
             db.query(qs, (err, data) => {
                 if (!err) {
@@ -16,10 +16,10 @@ module.exports = {
                                 totalPage:total_result%limit === 0 ? total_result/limit : Math.floor(total_result/limit)+1 ,
                                 currentPage: page || 1,
                                 previousPage:
-                                    page === 1 ? null : `/search?${urlQuery}page=${page - 1}&limit=${limit}`,
-                                nextpage: offset+limit <= total_result //dia sudah pada result2 terakhir
+                                    page === 1 ? null : `/search?${urlQuery}&page=${page - 1}&limit=${limit}`,
+                                nextpage: total_result-(offset+limit) < 0 //dia sudah pada result2 terakhir
                                     ? null
-                                    : `/search?${urlQuery}page=${page + 1}&limit=${limit}`
+                                    : `/search?${urlQuery}&page=${page + 1}&limit=${limit}`
                             }
                         }
                         resolve(newData)
@@ -30,9 +30,9 @@ module.exports = {
             })
         })
     },
-    totalResult : (query) => {
+    totalResult : (addQuery) => {
         return new Promise((resolve, reject) => {
-            const qs = `SELECT count(title) as total_result FROM tb_recipe WHERE title LIKE '%${query.title}%'`
+            let qs = `SELECT count(title) as total_result FROM tb_recipe ` + addQuery
             db.query(qs, (err, data) => {
                 if (!err) {
                     resolve(data)

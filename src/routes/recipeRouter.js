@@ -1,12 +1,6 @@
 const express = require('express')
 const recipeController = require ('../controllers/recipeController')
 const recipeRouter = express.Router()
-<<<<<<< HEAD
-const multiUpload = require("../helpers/upload");
-// const uploadVideo = require("../helpers/uploadVideo")
-
-recipeRouter.post('/add',  multiUpload , recipeController.addRecipe)
-=======
 const multiUpload = require("../helpers/upload_old");
 
 // const checkToken = require ('./../helpers/checkToken')
@@ -36,6 +30,5 @@ recipeRouter.get('/comment/:recipeId', recipeController.getCommentRecipe)
 
 
 
->>>>>>> c5f9928a211e7e0f6af58231381e36c83670ad70
 
 module.exports = recipeRouter
