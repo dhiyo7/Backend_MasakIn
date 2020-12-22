@@ -1,34 +1,5 @@
-// Punya mas moko
-
-// const recipeModel = require('../models/recipeModel')
-
-// module.exports = {
-//     addRecipe: (req, res) => {
-//         let insert_recipe = req.body
-//         // const { user_id } = req.decodedToken
-//         insert_recipe = {
-//             ...insert_recipe,
-//             // user_id,
-//             img: req.filePath
-//         }
-//         const image = req.filePath.split(',')
-//         recipeModel.addRecipe(insert_recipe)
-//             .then((data) => {
-//                 // form.success(res, {
-//                 //     ...insert_recipe,
-//                 //     img: image
-//                 // })
-//                 res.status(200).json({...insert_recipe,
-//                     img: image})
-//             }).catch((err) => {
-//                 // form.error(res, err)
-//                 res.status(500).json(err)
-//             })
-//     },
-// }
-
 const recipeModel = require("../models/recipeModel");
-// const { deleteRecipe } = require("../models/recipeModel_backup");
+const fs = require('fs')
 module.exports = {
   addRecipe: (req, res) => {
     // const { user_id } = req.decodedToken
@@ -37,7 +8,7 @@ module.exports = {
     console.log(videos)
 
     insert_recipe = {
-      id_user: 1,
+      id_user: req.decodedToken.id_user,
       img: image.map((res) => res.path),
       title: req.body.title,
       ingredients: req.body.ingredients,
@@ -57,6 +28,179 @@ module.exports = {
         res.status(500).json(err);
       });
   },
+
+  //plan B
+  b_addRecipe: (req, res) => {
+    // const id_user = req.decodedToken.user_id
+    const image = req.files.img;
+    let imagePath = image.map((value) =>
+      'public/images/' + value.filename
+    )
+    imagePath = imagePath.join(',')
+
+    const videos = req.files.videos;
+    let videosPath = videos.map((value) =>
+      'public/videos/' + value.filename
+    )
+    videosPath = videosPath.join(',')
+
+    insert_recipe = {
+      id_user: req.decodedToken.id_user,
+      img: imagePath,
+      title: req.body.title,
+      ingredients: req.body.ingredients,
+      videos: videosPath
+    };
+    recipeModel.b_addRecipe(insert_recipe)
+      .then((result) => {
+        res.status(200).json({
+          status:result.status,
+          data: {
+            ...insert_recipe,
+            img: imagePath.split(','),
+            videos:videosPath.split(',')
+          }
+        })
+      })
+      .catch((error) => {
+        res.status(500).json(error);
+      });
+  },
+  b_getAllRecipes: (req, res) => {
+    recipeModel.b_getAllRecipes()
+      .then((result) => {
+        res.status(200).json(result)
+      }).catch((error) => {
+        res.status(500).json(error)
+      })
+  },
+  b_getRecipeId: (req, res) => {
+    const { recipeId } = req.params
+    console.log(recipeId)
+    recipeModel.b_getRecipeId(recipeId)
+      .then((result) => {
+        res.status(result.status).json(result)
+      }).catch((error) => {
+        res.status(500).json(error)
+      })
+  },
+  b_getRecipeUser: (req, res) => {
+    const userId = req.decodedToken.id_user
+    recipeModel.b_getRecipeUser(userId)
+      .then((result) => {
+        res.status(result.status).json(result)
+      }).catch((error) => {
+        res.status(500).json(error)
+      })
+  },
+  b_updateRecipe: (req, res) => {
+    const { recipeId } = req.params
+    let updateData = req.body
+    if (req.files.img) {
+      const image = req.files.img;
+      let imagePath = image.map((value) =>
+        'public/images/' + value.filename
+      )
+      imagePath = imagePath.join(',')
+      updateData = {
+        ...updateData,
+        img: imagePath
+      }
+      recipeModel.b_deleteImg(recipeId)
+        .then((result) => {
+          if (result[0] != '') {
+            result[0].img.split(',').map((image) =>
+              fs.unlink(`${image}`, (err) => {
+                if (err) {
+                  console.log(err)
+                  return
+                } else {
+                  console.log(`${image} deleted`)
+                }
+              })
+            )
+          } else {
+            console.log('Nothing to delete')
+          }
+        })
+    }
+    if (req.files.videos) {
+      const videos = req.files.videos;
+      let videosPath = videos.map((value) =>
+        'public/videos/' + value.filename
+      )
+      videosPath = videosPath.join(',')
+      updateData = {
+        ...updateData,
+        videos: videosPath
+      }
+      recipeModel.b_deleteVideo(recipeId)
+        .then((result) => {
+          if (result[0] != '') {
+            result[0].videos.split(',').map((video) =>
+              fs.unlink(`${video}`, (err) => {
+                if (err) {
+                  console.log(err)
+                  return
+                } else {
+                  console.log(`${video} deleted`)
+                }
+              })
+            )
+          }
+        })
+    }
+    recipeModel.b_updateRecipe(recipeId, updateData)
+      .then((result) => {
+        res.status(200).json(result)
+      }).catch((error) => {
+        res.status(500).json(error)
+      })
+  },
+  b_deleteRecipe: (req, res) => {
+    const { recipeId } = req.params
+    recipeModel.b_deleteRecipe(recipeId)
+      .then((result) => {
+        recipeModel.b_deleteImg(recipeId)
+          .then((result) => {
+            if (result[0] != '') {
+              result[0].img.split(',').map((image) =>
+                fs.unlink(`${image}`, (err) => {
+                  if (err) {
+                    console.log(err)
+                    return
+                  } else {
+                    console.log(`public${image} deleted`)
+                  }
+                })
+              )
+            } else {
+              console.log('Nothing to delete')
+            }
+          })
+        recipeModel.b_deleteVideo(recipeId)
+          .then((result) => {
+            if (result[0] != '') {
+              result[0].videos.split(','), map((video) =>
+                fs.unlink(`${video}`, (err) => {
+                  if (err) {
+                    console.log(err)
+                    return
+                  } else {
+                    console.log(`${video} deleted`)
+                  }
+                })
+              )
+            }
+          })
+        res.status(200).json(result)
+      }).catch((error) => {
+        res.status(500).json(error)
+      })
+  },
+
+  //end of Plan B
+
   getAllRecipes: (req, res) => {
     recipeModel.getAllRecipes()
       .then((result) => {
@@ -162,13 +306,4 @@ module.exports = {
         res.status(500).json(error)
       })
   },
-  deleteRecipe: (req, res) => {
-    const {recipeId} = req.params
-    recipeModel.deleteRecipe(recipeId)
-    .then((result) => {
-      res.status(200).json(result)
-    }).catch((error) => {
-      res.status(500).json(error)
-    })
-  }
 };

@@ -35,7 +35,6 @@ module.exports = {
     },
     isLogin: (req, res, next) => {
         const bearerToken = req.header("x-access-token");
-        console.log(bearerToken)
         //jika tidak ada header x-access-token
         if (!bearerToken) {
             res.json({
@@ -46,6 +45,7 @@ module.exports = {
             const token = bearerToken.split(" ")[1]
             const checkBlacklist = new Promise((resolve, reject) => {
                 const queryStr = `SELECT token FROM tb_blacklist_token WHERE token = ?`
+                // console.log(token)
                 db.query(queryStr, token, (err, data) => {
                     if (!err) {
                         if (!data[0]) {

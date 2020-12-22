@@ -43,12 +43,183 @@ module.exports = {
       });
     });
   },
-  updateRecipe: () => {
 
+  //Plan B
+  b_addRecipe: (insert_product) => {
+    return new Promise((resolve, reject) => {
+      const queryStr = `INSERT INTO tb_b_recipe SET ?`
+      console.log('masuk model')
+      console.log(insert_product)
+      db.query(queryStr, insert_product, (err, data) => {
+        console.log(err, data)
+        if (!err) {
+          resolve({
+            status: 200
+          })
+        } else {
+          reject({
+            status: 500,
+            message: `Encountered error`,
+            details: err
+          })
+        }
+      })
+    })
   },
+  b_getAllRecipes: () => {
+    return new Promise((resolve, reject) => {
+      const queryStr = `SELECT id_recipe, img, title FROM tb_b_recipe`
+      db.query(queryStr, (err, data) => {
+        if (!err) {
+          // console.log(data)
+          // console.log('resolve')
+          resolve({
+            status: 200,
+            message: `berhasil menampilkan data`,
+            data: data
+          })
+          // resolve(data)
+        } else {
+          console.log('reject')
+          reject({
+            status: 500,
+            message: `Encountered error`,
+            details: err
+          })
+        }
+      })
+    })
+  },
+  b_getRecipeId: (recipeId) => {
+    return new Promise((resolve, reject) => {
+      const queryStr = `SELECT img, title, ingredients, videos FROM tb_b_recipe WHERE id_recipe = ?`
+      db.query(queryStr, recipeId, (err, data) => {
+        if (!err) {
+          if (data.length) {
+            resolve({
+              status: 200,
+              message: `recipe by id`,
+              data: data
+            })
+          } else {
+            reject({
+              status: 404,
+              message: `Data not found`
+            })
+          }
+        } else {
+          reject({
+            status: 500,
+            message: `Encountered error`,
+            details: err
+          })
+        }
+      })
+    })
+  },
+  b_getRecipeUser: (userId) => {
+    return new Promise((resolve, reject) => {
+      const queryStr = `SELECT img, title, ingredients, videos FROM tb_b_recipe WHERE id_user = ?`
+      db.query(queryStr, userId, (err, data) => {
+        if (!err) {
+          if (data.length) {
+            resolve({
+              status: 200,
+              message: `recipe by User ${userId}`,
+              data: data
+            })
+          } else {
+            reject({
+              status: 404,
+              message: `Data not found`,
+            })
+          }
+        } else {
+          reject({
+            status: 500,
+            message: `Encountered error`,
+            details: err
+          })
+        }
+      })
+    })
+  },
+  b_updateRecipe: (recipeId, patchUpdate) => {
+    return new Promise((resolve, reject) => {
+      const queryStr = `UPDATE tb_b_recipe SET ? WHERE id_recipe = ?`
+      db.query(queryStr, [patchUpdate,recipeId], (err, data) => {
+        if (!err) {
+          resolve({
+            status:200,
+            message:`Data berhasil di update pada id = ${recipeId}`
+          })
+        } else {
+          reject({
+            status: 500,
+            message: `Encountered error`,
+            details: err
+          })
+        }
+      })
+    })
+  },
+  b_deleteRecipe: (recipeId) => {
+    return new Promise((resolve, reject) => {
+      const queryStr = `DELETE FROM tb_b_recipe WHERE id_recipe = ?`
+      db.query(queryStr, recipeId, (err, data) => {
+        if (!err) {
+          resolve({
+            status: 200,
+            message: `Successfully deleted`
+          })
+        } else {
+          reject({
+            status: 500,
+            message: `Encountered error`,
+            details: err
+          })
+        }
+      })
+    })
+  },
+  b_deleteImg: (recipeId) => {
+    return new Promise ((resolve, reject) => {
+      const queryStr = `SELECT img FROM tb_b_recipe WHERE id_recipe = ?`
+      db.query(queryStr, recipeId, (err, data) => {
+        if(!err){
+          resolve(data)
+        }else{
+          reject({
+            status: 500,
+            message: `Encountered error`,
+            details: err
+          })
+        }
+      })
+    })
+  },
+  b_deleteVideo:(recipeId) => {
+    return new Promise ((resolve, reject) => {
+      const queryStr = `SELECT videos FROM tb_b_recipe WHERE id_recipe = ?`
+      db.query(queryStr, recipeId, (err, data) => {
+        if(!err){
+          resolve(data)
+        }else{
+          reject({
+            status: 500,
+            message: `Encountered error`,
+            details: err
+          })
+        }
+      })
+    })
+  },
+
+//end of Plan B
+
   getAllRecipes: () => {
     return new Promise((resolve, reject) => {
-      const queryStr = `SELECT id_recipe, img, title FROM tb_recipe WHERE is_showed = 1`
+      const queryStr = `SELECT id_recipe, img, title FROM tb_recipe`
       db.query(queryStr, (err, data) => {
         if (!err) {
           // console.log(data)
@@ -280,16 +451,17 @@ module.exports = {
     })
   },
   getRecipeComment: (recipeId) => {
-    return new Promise ((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const queryStr = `SELECT r.id_recipe, r.title, u.name, c.comment FROM tb_comment_recipe c JOIN tb_user u ON c.user_id = u.id_user JOIN tb_recipe r ON r.id_recipe = c.recipe_id WHERE c.recipe_id = ?`
-      db.query(queryStr, recipeId, (err, data) =>{
-        if(!err){
+      db.query(queryStr, recipeId, (err, data) => {
+        if (!err) {
+          console.log(data)
           resolve({
             recipeId: data[0].id_recipe,
             recipeName: data[0].title,
-            data:data //hhehe
+            data: data //hhehe
           })
-        }else{
+        } else {
           reject({
             status: 500,
             message: `Encountered error`,
@@ -299,23 +471,4 @@ module.exports = {
       })
     })
   },
-  deleteRecipe: (recipeId) => {
-    return new Promise ((resolve, reject) => {
-      const queryStr = `DELETE FROM tb_recipe WHERE id_recipe = ?`
-      db.query(queryStr, recipeId, (err, data) =>{
-        if(!err){
-          resolve({
-            status:200,
-            message:`Successfully deleted`
-          })
-        }else{
-          reject({
-            status: 500,
-            message: `Encountered error`,
-            details: err
-          })
-        }
-      })
-    })
-  }
 };
