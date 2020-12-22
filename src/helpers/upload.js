@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-=======
 // Punya mas Moko
 
->>>>>>> 852bfa789086e52cb8564614e6352e91b9bdfb88
 // const multer = require("multer");
 // const path = require("path");
 // const form = require("./form");
@@ -33,18 +30,10 @@
 //                 err,
 //             });
 //         } else {
-<<<<<<< HEAD
-//             let filePath = req.files.map((val) => 
-//                 "/images/" + val.filename    
-//             )
-//             req.filePath = filePath.join(',')
-//             console.log('upload gambar sukses')
-=======
 //             let filePath = req.files.map((val) =>
 //                 "/images/" + val.filename
 //             )
 //             req.filePath = filePath.join(',')
->>>>>>> 852bfa789086e52cb8564614e6352e91b9bdfb88
 //             next();
 //         }
 //     });
@@ -57,37 +46,6 @@ const path = require("path");
 const form = require("./form");
 
 const multerStorage = multer.diskStorage({
-<<<<<<< HEAD
-    destination: function(req, file, cb) {
-        cb(null, './public/images')
-    },
-    filename: function(req, file, cb) {
-        const nameFormat = `${Date.now()}-${file.fieldname}${path.extname(
-            file.originalname
-        )}`
-        cb(null, nameFormat)
-    }
-})
-
-const upload = multer({
-    storage: multerStorage,
-    limits: 2 * 1000 * 1000,
-})
-
-const multiUpload = (req, res, next) => {
-    const uploadMulti = upload.array("img", 10)
-    uploadMulti(req, res, (err) => {
-        if(err) {
-            form.error(res, {
-                msg: "Multer Error",
-                err,
-            })
-        } else {
-            next();
-        }
-    })
-}
-=======
   destination: function (req, file, cb) {
     if (
       file.mimetype === "image/png" ||
@@ -145,10 +103,10 @@ const multiUpload = (req, res, next) => {
         err,
       });
     } else {
+        console.log('next controller')
       next();
     }
   });
 };
->>>>>>> 852bfa789086e52cb8564614e6352e91b9bdfb88
 
 module.exports = multiUpload;
