@@ -54,11 +54,11 @@ module.exports = {
     recipeModel.b_addRecipe(insert_recipe)
       .then((result) => {
         res.status(200).json({
-          status:result.status,
+          status: result.status,
           data: {
             ...insert_recipe,
             img: imagePath.split(','),
-            videos:videosPath.split(',')
+            videos: videosPath.split(',')
           }
         })
       })
@@ -159,40 +159,40 @@ module.exports = {
   },
   b_deleteRecipe: (req, res) => {
     const { recipeId } = req.params
+    recipeModel.b_deleteImg(recipeId)
+      .then((result) => {
+        if (result[0] != '') {
+          result[0].img.split(',').map((image) =>
+            fs.unlink(`${image}`, (err) => {
+              if (err) {
+                console.log(err)
+                return
+              } else {
+                console.log(`${image} deleted`)
+              }
+            })
+          )
+        } else {
+          console.log('Nothing to delete')
+        }
+      })
+    recipeModel.b_deleteVideo(recipeId)
+      .then((result) => {
+        if (result[0] != '') {
+          result[0].videos.split(',').map((video) =>
+            fs.unlink(`${video}`, (err) => {
+              if (err) {
+                console.log(err)
+                return
+              } else {
+                console.log(`${video} deleted`)
+              }
+            })
+          )
+        }
+      })
     recipeModel.b_deleteRecipe(recipeId)
       .then((result) => {
-        recipeModel.b_deleteImg(recipeId)
-          .then((result) => {
-            if (result[0] != '') {
-              result[0].img.split(',').map((image) =>
-                fs.unlink(`${image}`, (err) => {
-                  if (err) {
-                    console.log(err)
-                    return
-                  } else {
-                    console.log(`public${image} deleted`)
-                  }
-                })
-              )
-            } else {
-              console.log('Nothing to delete')
-            }
-          })
-        recipeModel.b_deleteVideo(recipeId)
-          .then((result) => {
-            if (result[0] != '') {
-              result[0].videos.split(','), map((video) =>
-                fs.unlink(`${video}`, (err) => {
-                  if (err) {
-                    console.log(err)
-                    return
-                  } else {
-                    console.log(`${video} deleted`)
-                  }
-                })
-              )
-            }
-          })
         res.status(200).json(result)
       }).catch((error) => {
         res.status(500).json(error)
