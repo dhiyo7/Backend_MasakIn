@@ -103,6 +103,7 @@ const multiUpload = (req, res, next) => {
         err,
       });
     } else {
+        console.log('next controller')
       next();
     }
   });
