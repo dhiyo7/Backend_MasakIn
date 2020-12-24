@@ -22,9 +22,8 @@ module.exports = {
         let initial = 0
 
         if (Object.keys(req.query).length) {
-            addQuery += `WHERE `
             if (title != null) {
-                addQuery += `title like '%${title}%' `
+                addQuery += ` WHERE title like '%${title}%' `
                 urlQuery += `title=${title}`
                 // urlQuery += `&`
                 // if (initial != query_length) {
