@@ -7,8 +7,6 @@ const db = require('./src/config/mySQL')
 const mainRouter = require('./src/routes/index')
 const cors = require('cors')
 
-
-
 // listen port
 app.listen(port, () => {
     console.log(`server running in port ${port}`);
