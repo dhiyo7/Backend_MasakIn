@@ -210,7 +210,7 @@ module.exports = {
       })
   },
   likeRecipe: (req, res) => {
-    const user_id = 1 //user_id
+    const user_id = req.decodedToken.id_user
     const { recipeId } = req.params
     recipeModel.addLike(user_id, recipeId)
       .then((result) => {
@@ -220,7 +220,7 @@ module.exports = {
       })
   },
   getLikedRecipe: (req, res) => {
-    const user_id = 1
+    const user_id = req.decodedToken.id_user
     recipeModel.getLikedRecipe(user_id)
       .then((result) => {
         res.status(200).json(result)
@@ -230,7 +230,7 @@ module.exports = {
 
   },
   unlikeFromDetail: (req, res) => { //unlike from detail recipe
-    const user_id = 1
+    const user_id = req.decodedToken.id_user
     const { recipeId } = req.params
     recipeModel.unlikeFromDetail(user_id, recipeId)
       .then((result) => {
@@ -249,7 +249,7 @@ module.exports = {
       })
   },
   bookmarkRecipe: (req, res) => {
-    const user_id = 1 //user_id
+    const user_id = req.decodedToken.id_user
     const { recipeId } = req.params
     recipeModel.addBookmark(user_id, recipeId)
       .then((result) => {
@@ -259,7 +259,7 @@ module.exports = {
       })
   },
   getBookmarkedRecipe: (req, res) => {
-    const user_id = 1
+    const user_id = req.decodedToken.id_user
     recipeModel.getBookmarkedRecipe(user_id)
       .then((result) => {
         res.status(200).json(result)
@@ -268,7 +268,7 @@ module.exports = {
       })
   },
   removeBookmarkFromDetail: (req, res) => {
-    const user_id = 1
+    const user_id = req.decodedToken.id_user
     const { recipeId } = req.params
     recipeModel.removeBookmarkFromDetail(user_id, recipeId)
       .then((result) => {
@@ -289,7 +289,7 @@ module.exports = {
   addComment: (req, res) => {
     const { recipeId } = req.params
     const { comment } = req.body
-    const user_id = 4
+    const user_id = req.decodedToken.id_user
     recipeModel.addComment(user_id, recipeId, comment)
       .then((result) => {
         res.status(200).json(result)

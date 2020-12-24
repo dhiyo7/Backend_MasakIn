@@ -267,7 +267,7 @@ module.exports = {
       recipe_id: recipe_id
     }
     return new Promise((resolve, reject) => {
-      const queryStr = `INSERT INTO tb_like_recipe SET ?`
+      const queryStr = `INSERT INTO tb_b_like_recipe SET ?`
       db.query(queryStr, body, (err, data) => {
         if (!err) {
           resolve({
@@ -287,7 +287,7 @@ module.exports = {
   },
   getLikedRecipe: (user_id) => {
     return new Promise((resolve, reject) => {
-      const queryStr = `SELECT lr.id as "like_Id", r.id_recipe, r.img, r.title FROM tb_like_recipe lr JOIN tb_recipe r ON lr.recipe_id = r.id_recipe WHERE lr.user_id = ?`
+      const queryStr = `SELECT lr.id as "like_Id", r.id_recipe, r.img, r.title FROM tb_b_like_recipe lr JOIN tb_b_recipe r ON lr.recipe_id = r.id_recipe WHERE lr.user_id = ?`
       db.query(queryStr, user_id, (err, data) => {
         if (!err) {
           resolve({
@@ -307,7 +307,7 @@ module.exports = {
   },
   unlikeFromDetail: (user_id, recipe_id) => {
     return new Promise((resolve, reject) => {
-      const queryStr = `DELETE FROM tb_like_recipe WHERE user_id = ? AND recipe_id = ?`
+      const queryStr = `DELETE FROM tb_b_like_recipe WHERE user_id = ? AND recipe_id = ?`
       db.query(queryStr, [user_id, recipe_id], (err, data) => {
         if (!err) {
           resolve({
@@ -326,7 +326,7 @@ module.exports = {
   },
   unlikeFromList: (likedId) => {
     return new Promise((resolve, reject) => {
-      const queryStr = `DELETE FROM tb_like_recipe WHERE id = ?`
+      const queryStr = `DELETE FROM tb_b_like_recipe WHERE id = ?`
       db.query(queryStr, likedId, (err, data) => {
         if (!err) {
           resolve({
@@ -349,7 +349,7 @@ module.exports = {
       recipe_id: recipe_id
     }
     return new Promise((resolve, reject) => {
-      const queryStr = `INSERT INTO tb_bookmark_recipe SET ?`
+      const queryStr = `INSERT INTO tb_b_bookmark_recipe SET ?`
       db.query(queryStr, body, (err, data) => {
         if (!err) {
           resolve({
@@ -369,7 +369,7 @@ module.exports = {
   },
   getBookmarkedRecipe: (user_id) => {
     return new Promise((resolve, reject) => {
-      const queryStr = `SELECT br.id as "bookmark_id", r.id_recipe, r.img, r.title FROM tb_bookmark_recipe br JOIN tb_recipe r ON br.recipe_id = r.id_recipe WHERE br.user_id = ?`
+      const queryStr = `SELECT br.id as "bookmark_id", r.id_recipe, r.img, r.title FROM tb_b_bookmark_recipe br JOIN tb_b_recipe r ON br.recipe_id = r.id_recipe WHERE br.user_id = ?`
       db.query(queryStr, user_id, (err, data) => {
         if (!err) {
           resolve({
@@ -389,7 +389,7 @@ module.exports = {
   },
   removeBookmarkFromDetail: (user_id, recipe_id) => {
     return new Promise((resolve, reject) => {
-      const queryStr = `DELETE FROM tb_bookmark_recipe WHERE user_id = ? AND recipe_id = ?`
+      const queryStr = `DELETE FROM tb_b_bookmark_recipe WHERE user_id = ? AND recipe_id = ?`
       db.query(queryStr, [user_id, recipe_id], (err, data) => {
         if (!err) {
           resolve({
@@ -408,7 +408,7 @@ module.exports = {
   },
   removeBookmarkFromList: (bookmarkId) => {
     return new Promise((resolve, reject) => {
-      const queryStr = `DELETE FROM tb_bookmark_recipe WHERE id = ?`
+      const queryStr = `DELETE FROM tb_b_bookmark_recipe WHERE id = ?`
       db.query(queryStr, bookmarkId, (err, data) => {
         if (!err) {
           resolve({
@@ -432,7 +432,7 @@ module.exports = {
       comment: comment
     }
     return new Promise((resolve, reject) => {
-      const queryStr = `INSERT INTO tb_comment_recipe SET ?`
+      const queryStr = `INSERT INTO tb_b_comment_recipe SET ?`
       db.query(queryStr, body, (err, data) => {
         if (!err) {
           resolve({
@@ -452,7 +452,7 @@ module.exports = {
   },
   getRecipeComment: (recipeId) => {
     return new Promise((resolve, reject) => {
-      const queryStr = `SELECT r.id_recipe, r.title, u.name, c.comment FROM tb_comment_recipe c JOIN tb_user u ON c.user_id = u.id_user JOIN tb_recipe r ON r.id_recipe = c.recipe_id WHERE c.recipe_id = ?`
+      const queryStr = `SELECT r.id_recipe, r.title, u.name, c.comment FROM tb_b_comment_recipe c JOIN tb_user u ON c.user_id = u.id_user JOIN tb_recipe r ON r.id_recipe = c.recipe_id WHERE c.recipe_id = ?`
       db.query(queryStr, recipeId, (err, data) => {
         if (!err) {
           console.log(data)
