@@ -10,7 +10,7 @@ recipeRouter.get ('/', recipeController.getAllRecipes)
 // recipeRouter.delete('/delete/:recipeId', recipeController.deleteRecipe)
 
 //plan B endpoint Recipe
-recipeRouter.post('/b/add',checkToken.isLogin, multiUpload, recipeController.b_addRecipe)
+recipeRouter.post('/b/add', multiUpload, recipeController.b_addRecipe)
 recipeRouter.get('/b/myRecipe',checkToken.isLogin, recipeController.b_getRecipeUser)
 recipeRouter.patch('/b/updateRecipe/:recipeId',checkToken.isLogin, multiUpload, recipeController.b_updateRecipe)
 recipeRouter.get ('/b/', recipeController.b_getAllRecipes)
