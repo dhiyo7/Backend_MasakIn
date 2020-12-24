@@ -12,30 +12,31 @@ recipeRouter.get ('/', recipeController.getAllRecipes)
 //plan B endpoint Recipe
 recipeRouter.post('/b/add', multiUpload, recipeController.b_addRecipe)
 recipeRouter.get('/b/myRecipe',checkToken.isLogin, recipeController.b_getRecipeUser)
-recipeRouter.patch('/b/updateRecipe/:recipeId',checkToken.isLogin, multiUpload, recipeController.b_updateRecipe)
+recipeRouter.patch('/b/update/:recipeId',checkToken.isLogin, multiUpload, recipeController.b_updateRecipe)
 recipeRouter.get ('/b/', recipeController.b_getAllRecipes)
-recipeRouter.get('/b/:recipeId',checkToken.isLogin, recipeController.b_getRecipeId)
 recipeRouter.delete('/b/delete/:recipeId',checkToken.isLogin, recipeController.b_deleteRecipe)
 
 
 //Like Recipe
-recipeRouter.post('/like/:recipeId', recipeController.likeRecipe)
-recipeRouter.get ('/likedRecipe', recipeController.getLikedRecipe)
+recipeRouter.post('/b/like/:recipeId', checkToken.isLogin,recipeController.likeRecipe)
+recipeRouter.get ('/b/likedRecipe', checkToken.isLogin, recipeController.getLikedRecipe)
 //fromRecipe
-recipeRouter.delete('/unlike/:recipeId',recipeController.unlikeFromDetail)
+recipeRouter.delete('/b/unlike/:recipeId',checkToken.isLogin, recipeController.unlikeFromDetail)
 //fromList
-recipeRouter.delete('/unlikeList/:likedId',recipeController.unlikeFromList)
+recipeRouter.delete('/b/unlikeList/:likedId',checkToken.isLogin, recipeController.unlikeFromList)
 
 //Bookmark Recipe
-recipeRouter.post('/bookmark/:recipeId', recipeController.bookmarkRecipe)
-recipeRouter.get ('/bookmarkedRecipe', recipeController.getBookmarkedRecipe)
+recipeRouter.post('/b/bookmark/:recipeId', checkToken.isLogin, recipeController.bookmarkRecipe)
+recipeRouter.get ('/b/bookmarkedRecipe', checkToken.isLogin, recipeController.getBookmarkedRecipe)
 //fromRecipe
-recipeRouter.delete('/removeBookmark/:recipeId',recipeController.removeBookmarkFromDetail)
-recipeRouter.delete('/removebookmarklist/:bookmarkId',recipeController.removeBookmarkFromList)
+recipeRouter.delete('/b/removeBookmark/:recipeId',checkToken.isLogin, recipeController.removeBookmarkFromDetail)
+recipeRouter.delete('/b/removebookmarklist/:bookmarkId',checkToken.isLogin, recipeController.removeBookmarkFromList)
 
 //Comment Recipe
-recipeRouter.post('/addComment/:recipeId',recipeController.addComment)
-recipeRouter.get('/comment/:recipeId', recipeController.getCommentRecipe)
+recipeRouter.post('/b/addComment/:recipeId',checkToken.isLogin, recipeController.addComment)
+recipeRouter.get('/b/comment/:recipeId', checkToken.isLogin, recipeController.getCommentRecipe)
+
+recipeRouter.get('/b/:recipeId',checkToken.isLogin, recipeController.b_getRecipeId)
 
 
 

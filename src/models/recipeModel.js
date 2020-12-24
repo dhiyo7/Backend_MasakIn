@@ -92,7 +92,7 @@ module.exports = {
   },
   b_getRecipeId: (recipeId) => {
     return new Promise((resolve, reject) => {
-      const queryStr = `SELECT img, title, ingredients, videos FROM tb_b_recipe WHERE id_recipe = ?`
+      const queryStr = `SELECT img, title, ingredients, videos, viewed FROM tb_b_recipe WHERE id_recipe = ?`
       db.query(queryStr, recipeId, (err, data) => {
         if (!err) {
           if (data.length) {
@@ -114,6 +114,18 @@ module.exports = {
             details: err
           })
         }
+      })
+    })
+  },
+  b_addView: (recipeId) => {
+    return new Promise((resolve, reject) => {
+      const queryStr = `UPDATE tb_b_recipe SET viewed = viewed+1 WHERE id_recipe = ?`
+      db.query(queryStr,recipeId,(err,data) => {
+        if(!err){
+          resolve({msg: `view+1`})
+        }else{
+          reject(err)
+        } 
       })
     })
   },
@@ -147,11 +159,11 @@ module.exports = {
   b_updateRecipe: (recipeId, patchUpdate) => {
     return new Promise((resolve, reject) => {
       const queryStr = `UPDATE tb_b_recipe SET ? WHERE id_recipe = ?`
-      db.query(queryStr, [patchUpdate,recipeId], (err, data) => {
+      db.query(queryStr, [patchUpdate, recipeId], (err, data) => {
         if (!err) {
           resolve({
-            status:200,
-            message:`Data berhasil di update pada id = ${recipeId}`
+            status: 200,
+            message: `Data berhasil di update pada id = ${recipeId}`
           })
         } else {
           reject({
@@ -183,12 +195,12 @@ module.exports = {
     })
   },
   b_deleteImg: (recipeId) => {
-    return new Promise ((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const queryStr = `SELECT img FROM tb_b_recipe WHERE id_recipe = ?`
       db.query(queryStr, recipeId, (err, data) => {
-        if(!err){
+        if (!err) {
           resolve(data)
-        }else{
+        } else {
           reject({
             status: 500,
             message: `Encountered error`,
@@ -198,13 +210,13 @@ module.exports = {
       })
     })
   },
-  b_deleteVideo:(recipeId) => {
-    return new Promise ((resolve, reject) => {
+  b_deleteVideo: (recipeId) => {
+    return new Promise((resolve, reject) => {
       const queryStr = `SELECT videos FROM tb_b_recipe WHERE id_recipe = ?`
       db.query(queryStr, recipeId, (err, data) => {
-        if(!err){
+        if (!err) {
           resolve(data)
-        }else{
+        } else {
           reject({
             status: 500,
             message: `Encountered error`,
@@ -215,7 +227,7 @@ module.exports = {
     })
   },
 
-//end of Plan B
+  //end of Plan B
 
   getAllRecipes: () => {
     return new Promise((resolve, reject) => {
@@ -267,7 +279,7 @@ module.exports = {
       recipe_id: recipe_id
     }
     return new Promise((resolve, reject) => {
-      const queryStr = `INSERT INTO tb_like_recipe SET ?`
+      const queryStr = `INSERT INTO tb_b_like_recipe SET ?`
       db.query(queryStr, body, (err, data) => {
         if (!err) {
           resolve({
@@ -287,14 +299,22 @@ module.exports = {
   },
   getLikedRecipe: (user_id) => {
     return new Promise((resolve, reject) => {
-      const queryStr = `SELECT lr.id as "like_Id", r.id_recipe, r.img, r.title FROM tb_like_recipe lr JOIN tb_recipe r ON lr.recipe_id = r.id_recipe WHERE lr.user_id = ?`
+      const queryStr = `SELECT lr.id as "like_Id", r.id_recipe, r.img, r.title FROM tb_b_like_recipe lr JOIN tb_b_recipe r ON lr.recipe_id = r.id_recipe WHERE lr.user_id = ?`
       db.query(queryStr, user_id, (err, data) => {
         if (!err) {
-          resolve({
-            status: 200,
-            message: `Liked`,
-            data: data
-          })
+          if (data.length) {
+            resolve({
+              status: 200,
+              message: `Liked`,
+              data: data
+            })
+          } else {
+            resolve({
+              status: 404,
+              message: `Liked`,
+              data: `Data not found`
+            })
+          }
         } else {
           reject({
             status: 500,
@@ -307,7 +327,7 @@ module.exports = {
   },
   unlikeFromDetail: (user_id, recipe_id) => {
     return new Promise((resolve, reject) => {
-      const queryStr = `DELETE FROM tb_like_recipe WHERE user_id = ? AND recipe_id = ?`
+      const queryStr = `DELETE FROM tb_b_like_recipe WHERE user_id = ? AND recipe_id = ?`
       db.query(queryStr, [user_id, recipe_id], (err, data) => {
         if (!err) {
           resolve({
@@ -326,7 +346,7 @@ module.exports = {
   },
   unlikeFromList: (likedId) => {
     return new Promise((resolve, reject) => {
-      const queryStr = `DELETE FROM tb_like_recipe WHERE id = ?`
+      const queryStr = `DELETE FROM tb_b_like_recipe WHERE id = ?`
       db.query(queryStr, likedId, (err, data) => {
         if (!err) {
           resolve({
@@ -349,7 +369,7 @@ module.exports = {
       recipe_id: recipe_id
     }
     return new Promise((resolve, reject) => {
-      const queryStr = `INSERT INTO tb_bookmark_recipe SET ?`
+      const queryStr = `INSERT INTO tb_b_bookmark_recipe SET ?`
       db.query(queryStr, body, (err, data) => {
         if (!err) {
           resolve({
@@ -369,14 +389,22 @@ module.exports = {
   },
   getBookmarkedRecipe: (user_id) => {
     return new Promise((resolve, reject) => {
-      const queryStr = `SELECT br.id as "bookmark_id", r.id_recipe, r.img, r.title FROM tb_bookmark_recipe br JOIN tb_recipe r ON br.recipe_id = r.id_recipe WHERE br.user_id = ?`
+      const queryStr = `SELECT br.id as "bookmark_id", r.id_recipe, r.img, r.title FROM tb_b_bookmark_recipe br JOIN tb_b_recipe r ON br.recipe_id = r.id_recipe WHERE br.user_id = ?`
       db.query(queryStr, user_id, (err, data) => {
         if (!err) {
-          resolve({
-            status: 200,
-            message: `Bookmark`,
-            data: data
-          })
+          if (data.length) {
+            resolve({
+              status: 200,
+              message: `Bookmark`,
+              data: data
+            })
+          } else {
+            resolve({
+              status: 404,
+              message: `Bookmark`,
+              data: `Data not Found`
+            })
+          }
         } else {
           reject({
             status: 500,
@@ -389,7 +417,7 @@ module.exports = {
   },
   removeBookmarkFromDetail: (user_id, recipe_id) => {
     return new Promise((resolve, reject) => {
-      const queryStr = `DELETE FROM tb_bookmark_recipe WHERE user_id = ? AND recipe_id = ?`
+      const queryStr = `DELETE FROM tb_b_bookmark_recipe WHERE user_id = ? AND recipe_id = ?`
       db.query(queryStr, [user_id, recipe_id], (err, data) => {
         if (!err) {
           resolve({
@@ -408,7 +436,7 @@ module.exports = {
   },
   removeBookmarkFromList: (bookmarkId) => {
     return new Promise((resolve, reject) => {
-      const queryStr = `DELETE FROM tb_bookmark_recipe WHERE id = ?`
+      const queryStr = `DELETE FROM tb_b_bookmark_recipe WHERE id = ?`
       db.query(queryStr, bookmarkId, (err, data) => {
         if (!err) {
           resolve({
@@ -432,7 +460,7 @@ module.exports = {
       comment: comment
     }
     return new Promise((resolve, reject) => {
-      const queryStr = `INSERT INTO tb_comment_recipe SET ?`
+      const queryStr = `INSERT INTO tb_b_comment_recipe SET ?`
       db.query(queryStr, body, (err, data) => {
         if (!err) {
           resolve({
@@ -452,15 +480,20 @@ module.exports = {
   },
   getRecipeComment: (recipeId) => {
     return new Promise((resolve, reject) => {
-      const queryStr = `SELECT r.id_recipe, r.title, u.name, c.comment FROM tb_comment_recipe c JOIN tb_user u ON c.user_id = u.id_user JOIN tb_recipe r ON r.id_recipe = c.recipe_id WHERE c.recipe_id = ?`
+      const queryStr = `SELECT r.id_recipe, r.title, u.name, c.comment, c.created_at FROM tb_b_comment_recipe c JOIN tb_user u ON c.user_id = u.id_user JOIN tb_b_recipe r ON r.id_recipe = c.recipe_id WHERE c.recipe_id = ? ORDER BY c.created_at DESC`
       db.query(queryStr, recipeId, (err, data) => {
         if (!err) {
-          console.log(data)
-          resolve({
-            recipeId: data[0].id_recipe,
-            recipeName: data[0].title,
-            data: data //hhehe
-          })
+          if (data.length) {
+            resolve({
+              recipeId: data[0].id_recipe,
+              recipeName: data[0].title,
+              data: data //hhehe
+            })
+          } else {
+            resolve({
+              data: `No comment yet.` //hhehe
+            })
+          }
         } else {
           reject({
             status: 500,
