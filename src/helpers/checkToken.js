@@ -43,10 +43,12 @@ module.exports = {
             })
         } else {
             const token = bearerToken.split(" ")[1]
+            // console.log(token)
             const checkBlacklist = new Promise((resolve, reject) => {
                 const queryStr = `SELECT token FROM tb_blacklist_token WHERE token = ?`
                 // console.log(token)
-                db.query(queryStr, token, (err, data) => {
+                db.query(queryStr,token, (err, data) => {
+                    // console.log(err)
                     if (!err) {
                         if (!data[0]) {
                             resolve(token)
@@ -57,7 +59,7 @@ module.exports = {
                         }
                     } else {
                         reject({
-                            msg: `check Token ERROR!`
+                            msg: `gagal gan hhe`
                         })
                     }
                 })

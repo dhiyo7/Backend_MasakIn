@@ -32,15 +32,40 @@ module.exports = {
                 // }
             }
         }
-            console.log(addQuery, urlQuery, offset,  limit)
-            searchModel.totalResult(addQuery)
-                .then((result) => {
-                    searchModel.searchRecipe(addQuery, urlQuery, result[0].total_result, page, offset, limit)
-                        .then((data) => {
-                            res.status(200).json(data)
-                        })
-                }).catch((err) => {
-                    res.status(500).json(err)
-                });
-        },
-    };
+        console.log(addQuery, urlQuery, offset, limit)
+        searchModel.totalResult(addQuery)
+            .then((result) => {
+                searchModel.searchRecipe(addQuery, urlQuery, result[0].total_result, page, offset, limit)
+                    .then((data) => {
+                        res.status(200).json(data)
+                    })
+            }).catch((err) => {
+                res.status(500).json(err)
+            });
+    },
+    popular: (req, res) => {
+        searchModel.Popular()
+            .then((result) => {
+                res.status(200).json(result)
+            }).catch((error) => {
+                res.status(500).json(error)
+            })
+    },
+    new: (req, res) => {
+        searchModel.Newest()
+            .then((result) => {
+                res.status(200).json(result)
+            }).catch((error) => {
+                res.status(500).json(error)
+            })
+    },
+    mostViewed: (req, res) => {
+        searchModel.mostViewed()
+            .then((result) => {
+                res.status(200).json(result)
+            }).catch((error) => {
+                res.status(500).json(error)
+            })
+    }
+
+};

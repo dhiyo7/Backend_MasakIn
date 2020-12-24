@@ -88,6 +88,8 @@ module.exports = {
                                         resolve({
                                             status: 200,
                                             message: `Berhasil login`,
+                                            id_user:data[0].id_user,
+                                            name: data[0].name,
                                             tokenId: token
                                         })
                                     }else{
