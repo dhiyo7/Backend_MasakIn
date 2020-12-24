@@ -77,12 +77,18 @@ module.exports = {
   b_getRecipeId: (req, res) => {
     const { recipeId } = req.params
     console.log(recipeId)
-    recipeModel.b_getRecipeId(recipeId)
+    recipeModel.b_addView(recipeId).then(
+      recipeModel.b_getRecipeId(recipeId)
       .then((result) => {
+        
         res.status(result.status).json(result)
       }).catch((error) => {
         res.status(500).json(error)
       })
+    ).catch((err) => {
+      console.log(err)
+    })
+    
   },
   b_getRecipeUser: (req, res) => {
     const userId = req.decodedToken.id_user
