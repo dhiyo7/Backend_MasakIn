@@ -5,8 +5,9 @@ const multiUpload = require("../helpers/upload");
 
 const checkToken = require ('./../helpers/checkToken')
 
-recipeRouter.post('/add', multiUpload, recipeController.addRecipe)
 recipeRouter.get ('/', recipeController.getAllRecipes)
+recipeRouter.get('/:recipeId', recipeController.getRecipeById)
+recipeRouter.post('/add', multiUpload, recipeController.addRecipe)
 // recipeRouter.delete('/delete/:recipeId', recipeController.deleteRecipe)
 
 //plan B endpoint Recipe
