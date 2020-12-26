@@ -1,6 +1,7 @@
 const db = require('../config/mySQL')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const nodemailer = require('nodemailer')
 
 module.exports = {
     signup: (body) => {
@@ -10,9 +11,9 @@ module.exports = {
             ...body,
             is_active: 0
         }
-        return new Promise((resolve, reject) => {
+            return new Promise((resolve, reject) => {
             //saltRounds
-            const saltRounds = Math.floor(Math.random() * 10) + 1
+            const saltRounds = Math.floor(Math.random() * 10) + 1;
             //hash password
             bcrypt.hash(body.password, saltRounds, (err, hasedPassword) => {
                 const newUser = {
@@ -27,11 +28,35 @@ module.exports = {
                             email: body.email
                         }
                         const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: 1000 * 60 * 15 })
-                        resolve({
-                            status: 200,
-                            message: `${body.email} telah berhasil mendaftar, silahkan login`,
-                            activateHere: `${process.env.HOSTNAME}/auth/activate_account/${token}`
+                        //Nodemailer: 
+                        let transporter = nodemailer.createTransport({
+                            service: 'gmail',
+                            host: 'smtp.gmail.com',
+                            port: 578,
+                            secure: false,
+                            auth: {
+                                user: process.env.USER_EMAIL,
+                                pass: process.env.PASS_EMAIL
+                            }
                         })
+                        
+                        let mailOptions = {
+                            from: "IT Team <teamfoodrecipe@gmail.com>",
+                            to: body.email,
+                            subject: 'Activate Account From FoodRecipe Team',
+                            html: ` <h1> TESTING API </h1>
+                            <p> Hello, please activate your account with click link below: </p>
+                            <a href="${process.env.HOSTNAME}/auth/activate_account/${token}">Click me ${process.env.HOSTNAME}/auth/activate_account/${token} </a> `
+                        }
+                        resolve(
+                            transporter.sendMail(mailOptions, (err, data) => {
+                                if(err) {
+                                    console.log("Its Error: ", err);
+                                } else {
+                                    console.log("Sent Success!!!!");
+                                }
+                            })
+                        )
                     } else {
                         reject({
                             status: 500,
@@ -88,6 +113,8 @@ module.exports = {
                                         resolve({
                                             status: 200,
                                             message: `Berhasil login`,
+                                            tokenId: token,
+                                            email: email,
                                             id_user:data[0].id_user,
                                             name: data[0].name,
                                             tokenId: token
@@ -136,7 +163,8 @@ module.exports = {
                         const tokenForgot = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: 1000 * 60 * 15 })
                         resolve({
                             status: 200,
-                            message: `Here's your reset password Link : ${process.env.HOSTNAME}/auth/reset_password/${tokenForgot}`
+                            email: email,
+                            message: `${process.env.HOSTNAME}/auth/reset_password/${tokenForgot}`
                         })
                     } else {
                         reject({
