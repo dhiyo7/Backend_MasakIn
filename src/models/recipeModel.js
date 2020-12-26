@@ -90,6 +90,68 @@ module.exports = {
     });
   },
 
+  addRecipeVideo: (params) => {
+    return new Promise((resolve, reject) => {
+      const queryStr = "INSERT INTO pivot_video SET ?";
+      // console.log(params);
+      db.query(queryStr, params, (err, data) => {
+        if (!err) {
+          resolve(data);
+        } else {
+          reject(err);
+        }
+      });
+    });
+  },
+
+  updateRecipeVideo: (params, videoId) => {
+    return new Promise((resolve, reject) => {
+      const queryStr = "UPDATE pivot_video SET ? where id = ?";
+      // console.log(params);
+      db.query(queryStr, [params, videoId], (err, data) => {
+        if (!err) {
+          resolve(data);
+        } else {
+          reject(err);
+        }
+      });
+    });
+  },
+
+  getRecipeVideoById: (videoId) => {
+    return new Promise((resolve, reject) => {
+      const queryStr = `select * from pivot_video where id = ?`;
+      db.query(queryStr, videoId, (err, data) => {
+        if (!err) {
+          console.log(data);
+          resolve({
+            data: data,
+          });
+        } else {
+          reject({
+            status: 500,
+            message: `Encountered error`,
+            details: err,
+          });
+        }
+      });
+    });
+  },
+
+  deleteVideo: (videoId) => {
+    return new Promise((resolve, reject) => {
+      const queryStr = "DELETE from pivot_video where id = ?";
+      // console.log(params);
+      db.query(queryStr, videoId, (err, data) => {
+        if (!err) {
+          resolve(data);
+        } else {
+          reject(err);
+        }
+      });
+    });
+  },
+
   //Plan B
   b_addRecipe: (insert_product) => {
     return new Promise((resolve, reject) => {

@@ -7,7 +7,11 @@ const checkToken = require ('./../helpers/checkToken')
 
 recipeRouter.get ('/', recipeController.getAllRecipes)
 recipeRouter.get('/:recipeId', recipeController.getRecipeById)
-recipeRouter.post('/add', multiUpload, recipeController.addRecipe)
+recipeRouter.post('/add', checkToken.isLogin, multiUpload, recipeController.addRecipe)
+recipeRouter.post('/video',multiUpload, recipeController.addVideo)
+recipeRouter.put('/video/:videoId',multiUpload, recipeController.updateVideo)
+recipeRouter.get('/video/:videoId',multiUpload, recipeController.getVideoById)
+recipeRouter.delete('/video/:videoId',multiUpload, recipeController.deleteVideo)
 // recipeRouter.delete('/delete/:recipeId', recipeController.deleteRecipe)
 
 //plan B endpoint Recipe
