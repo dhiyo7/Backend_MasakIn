@@ -92,7 +92,7 @@ module.exports = {
     login: (body) => {
         const { email, password } = body
         return new Promise((resolve, reject) => {
-            const queryStr = `SELECT email,name,is_active, password FROM tb_user WHERE email = ?`
+            const queryStr = `SELECT id_user,email,name,is_active, password FROM tb_user WHERE email = ?`
             db.query(queryStr, email, (err, data) => {
                 if (!err) {
                     if (data[0]) {
@@ -106,15 +106,21 @@ module.exports = {
                                 } else {
                                     if(data[0].is_active != 0){
                                         const payload = {
+                                            id_user:data[0].id_user,
                                             name: data[0].name,
-                                            email: data[0].email
                                         }
                                         const token = jwt.sign(payload, process.env.SECRET_KEY)
                                         resolve({
                                             status: 200,
                                             message: `Berhasil login`,
+<<<<<<< HEAD
                                             tokenId: token,
                                             email: email
+=======
+                                            id_user:data[0].id_user,
+                                            name: data[0].name,
+                                            tokenId: token
+>>>>>>> ebe8afac5ce0855ee54cf55673507e1a82fcc961
                                         })
                                     }else{
                                         reject({
