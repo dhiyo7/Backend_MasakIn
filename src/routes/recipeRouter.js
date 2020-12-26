@@ -7,10 +7,11 @@ const checkToken = require ('./../helpers/checkToken')
 
 recipeRouter.get ('/', recipeController.getAllRecipes)
 recipeRouter.get('/:recipeId', recipeController.getRecipeById)
+recipeRouter.get('/video/:videoId',multiUpload, recipeController.getVideoById)
+recipeRouter.get('/views', checkToken.checkLogin, recipeController.getRecipeByView);
 recipeRouter.post('/add', checkToken.isLogin, multiUpload, recipeController.addRecipe)
 recipeRouter.post('/video',multiUpload, recipeController.addVideo)
 recipeRouter.put('/video/:videoId',multiUpload, recipeController.updateVideo)
-recipeRouter.get('/video/:videoId',multiUpload, recipeController.getVideoById)
 recipeRouter.delete('/video/:videoId',multiUpload, recipeController.deleteVideo)
 // recipeRouter.delete('/delete/:recipeId', recipeController.deleteRecipe)
 
@@ -21,6 +22,8 @@ recipeRouter.patch('/b/update/:recipeId',checkToken.isLogin, multiUpload, recipe
 recipeRouter.get ('/b/', recipeController.b_getAllRecipes)
 recipeRouter.delete('/b/delete/:recipeId',checkToken.isLogin, recipeController.b_deleteRecipe)
 
+// Popular
+recipeRouter.get('/b/views', checkToken.checkLogin, recipeController.b_getRecipeByViews);
 
 //Like Recipe
 recipeRouter.post('/b/like/:recipeId', checkToken.isLogin,recipeController.likeRecipe)
