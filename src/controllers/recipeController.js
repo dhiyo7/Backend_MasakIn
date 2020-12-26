@@ -152,6 +152,7 @@ module.exports = {
         res.status(500).json(error);
       });
   },
+
   //plan B
   b_addRecipe: (req, res) => {
     // const id_user = req.decodedToken.user_id
@@ -327,6 +328,18 @@ module.exports = {
         res.status(500).json(error);
       });
   },
+  // Popular
+  b_getRecipeByViews: (req, res) => {
+    const decodeTOken = req.decodedToken;
+    recipeModel
+      .b_getRecipeByViews(decodeTOken)
+      .then((result) => {
+        res.status(200).json(result);
+      })
+      .catch((error) => {
+        res.status(500).json(error);
+      });
+  },
 
   //end of Plan B
 
@@ -450,6 +463,20 @@ module.exports = {
     const { recipeId } = req.params;
     recipeModel
       .getRecipeComment(recipeId)
+      .then((result) => {
+        res.status(200).json(result);
+      })
+      .catch((error) => {
+        res.status(500).json(error);
+      });
+  },
+
+  // Popular
+  getRecipeByView: (req, res) => {
+    const decodeToken = req.decodedToken;
+    // console.log(req);
+    recipeModel
+      .getRecipeByView(decodeToken)
       .then((result) => {
         res.status(200).json(result);
       })

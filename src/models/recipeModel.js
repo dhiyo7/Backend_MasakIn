@@ -174,6 +174,7 @@ module.exports = {
       });
     });
   },
+
   b_getAllRecipes: () => {
     return new Promise((resolve, reject) => {
       const queryStr = `SELECT id_recipe, img, title FROM tb_b_recipe`;
@@ -198,6 +199,7 @@ module.exports = {
       });
     });
   },
+
   b_getRecipeId: (recipeId) => {
     return new Promise((resolve, reject) => {
       const queryStr = `SELECT img, title, ingredients, videos FROM tb_b_recipe WHERE id_recipe = ?`;
@@ -266,6 +268,7 @@ module.exports = {
       });
     });
   },
+
   b_updateRecipe: (recipeId, patchUpdate) => {
     return new Promise((resolve, reject) => {
       const queryStr = `UPDATE tb_b_recipe SET ? WHERE id_recipe = ?`;
@@ -285,6 +288,7 @@ module.exports = {
       });
     });
   },
+
   b_deleteRecipe: (recipeId) => {
     return new Promise((resolve, reject) => {
       const queryStr = `DELETE FROM tb_b_recipe WHERE id_recipe = ?`;
@@ -304,6 +308,7 @@ module.exports = {
       });
     });
   },
+
   b_deleteImg: (recipeId) => {
     return new Promise((resolve, reject) => {
       const queryStr = `SELECT img FROM tb_b_recipe WHERE id_recipe = ?`;
@@ -320,6 +325,7 @@ module.exports = {
       });
     });
   },
+
   b_deleteVideo: (recipeId) => {
     return new Promise((resolve, reject) => {
       const queryStr = `SELECT videos FROM tb_b_recipe WHERE id_recipe = ?`;
@@ -330,6 +336,29 @@ module.exports = {
           reject({
             status: 500,
             message: `Encountered error`,
+            details: err,
+          });
+        }
+      });
+    });
+  },
+
+  // Popular
+  b_getRecipeByViews: (decodeToken) => {
+    console.log(decodeToken);
+    return new Promise((resolve, reject) => {
+      const queryStr = `SELECT id_recipe, img, title, viewed FROM tb_b_recipe ORDER BY viewed DESC`;
+      db.query(queryStr, (err, data) => {
+        if (!err) {
+          resolve({
+            status: 200,
+            message: `berhasil menampilkan data`,
+            data: data,
+          });
+        } else {
+          reject({
+            status: 500,
+            message: `Encountered Error`,
             details: err,
           });
         }
@@ -363,6 +392,7 @@ module.exports = {
       });
     });
   },
+
   getRecipesByUser: (id) => {
     return new Promise((resolve, reject) => {
       const queryStr = `SELECT id_recipe, img, title FROM tb_recipe WHERE user_id = ?`;
@@ -383,6 +413,7 @@ module.exports = {
       });
     });
   },
+
   addLike: (user_id, recipe_id) => {
     const body = {
       user_id: user_id,
@@ -407,6 +438,7 @@ module.exports = {
       });
     });
   },
+
   getLikedRecipe: (user_id) => {
     return new Promise((resolve, reject) => {
       const queryStr = `SELECT lr.id as "like_Id", r.id_recipe, r.img, r.title FROM tb_b_like_recipe lr JOIN tb_b_recipe r ON lr.recipe_id = r.id_recipe WHERE lr.user_id = ?`;
@@ -435,6 +467,7 @@ module.exports = {
       });
     });
   },
+
   unlikeFromDetail: (user_id, recipe_id) => {
     return new Promise((resolve, reject) => {
       const queryStr = `DELETE FROM tb_like_recipe WHERE user_id = ? AND recipe_id = ?`;
@@ -454,6 +487,7 @@ module.exports = {
       });
     });
   },
+
   unlikeFromList: (likedId) => {
     return new Promise((resolve, reject) => {
       const queryStr = `DELETE FROM tb_like_recipe WHERE id = ?`;
@@ -473,6 +507,7 @@ module.exports = {
       });
     });
   },
+
   addBookmark: (user_id, recipe_id) => {
     const body = {
       user_id: user_id,
@@ -497,6 +532,7 @@ module.exports = {
       });
     });
   },
+
   getBookmarkedRecipe: (user_id) => {
     return new Promise((resolve, reject) => {
       const queryStr = `SELECT br.id as "bookmark_id", r.id_recipe, r.img, r.title FROM tb_b_bookmark_recipe br JOIN tb_b_recipe r ON br.recipe_id = r.id_recipe WHERE br.user_id = ?`;
@@ -525,6 +561,7 @@ module.exports = {
       });
     });
   },
+
   removeBookmarkFromDetail: (user_id, recipe_id) => {
     return new Promise((resolve, reject) => {
       const queryStr = `DELETE FROM tb_bookmark_recipe WHERE user_id = ? AND recipe_id = ?`;
@@ -544,6 +581,7 @@ module.exports = {
       });
     });
   },
+
   removeBookmarkFromList: (bookmarkId) => {
     return new Promise((resolve, reject) => {
       const queryStr = `DELETE FROM tb_bookmark_recipe WHERE id = ?`;
@@ -563,6 +601,7 @@ module.exports = {
       });
     });
   },
+
   addComment: (user_id, recipeId, comment) => {
     const body = {
       user_id: user_id,
@@ -588,6 +627,7 @@ module.exports = {
       });
     });
   },
+
   getRecipeComment: (recipeId) => {
     return new Promise((resolve, reject) => {
       const queryStr = `SELECT r.id_recipe, r.title, u.name, c.comment, c.created_at FROM tb_b_comment_recipe c JOIN tb_user u ON c.user_id = u.id_user JOIN tb_b_recipe r ON r.id_recipe = c.recipe_id WHERE c.recipe_id = ? ORDER BY c.created_at DESC`;
@@ -605,6 +645,42 @@ module.exports = {
             });
           }
         } else {
+          reject({
+            status: 500,
+            message: `Encountered error`,
+            details: err,
+          });
+        }
+      });
+    });
+  },
+
+  // Popular
+  getRecipeByView: (decodeToken) => {
+    const checkUser = decodeToken;
+    return new Promise((resolve, reject) => {
+      let queryStr = "";
+      if (checkUser != undefined) {
+        // console.log("Ada user");
+        queryStr += `SELECT tr.id_recipe, tr.img, tr.title FROM tb_like_recipe INNER JOIN tb_recipe as tr ON tr.id_recipe = tb_like_recipe.recipe_id WHERE tb_like_recipe.user_id = ${decodeToken.id_user}`;
+      } else {
+        // console.log("Tidak ada user");
+        queryStr += `SELECT id_recipe, img, title, views FROM tb_recipe ORDER BY views DESC`;
+      }
+
+      // console.log(decodeToken);
+      db.query(queryStr, (err, data) => {
+        if (!err) {
+          // console.log(data)
+          // console.log('resolve')
+          resolve({
+            status: 200,
+            message: `berhasil menampilkan data`,
+            data: data,
+          });
+          // resolve(data)
+        } else {
+          console.log("reject");
           reject({
             status: 500,
             message: `Encountered error`,
