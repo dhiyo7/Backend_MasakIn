@@ -41,11 +41,117 @@ module.exports = {
         if (!finalResult || !videos)
           return res.status(404).json({ msg: "Recipe not found" });
         finalResult.videos = videos;
-        res.status(200).json({msg: "Data Recipe successfully", status: 200, data: finalResult});
+        res.status(200).json({
+          msg: "Data Recipe successfully",
+          status: 200,
+          data: finalResult,
+        });
       })
       .catch((err) => res.status(500).json({ msg: err.message }));
   },
 
+  getVideoById: (req, res) => {
+    const { videoId } = req.params;
+    recipeModel
+      .getRecipeVideoById(videoId)
+      .then((result) => {
+        res.status(200).json(result.data[0]);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).json(error);
+      });
+  },
+
+  addVideo: (req, res) => {
+    const params = req.body;
+    console.log(params);
+    const videos = req.files.videos;
+    if (videos) {
+      params.video_file = videos[0].path;
+    } else {
+      res.status(500).json("videos required");
+    }
+    recipeModel
+      .addRecipeVideo(params)
+      .then((result) => {
+        res.status(200).json(result);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).json(error);
+      });
+  },
+
+  updateVideo: (req, res) => {
+    const params = req.body;
+    const { videoId } = req.params;
+    console.log(params);
+    const videos = req.files.videos;
+    if (videos) {
+      params.video_file = videos[0].path;
+    }
+    Promise.all([
+      recipeModel.getRecipeVideoById(videoId),
+      recipeModel.updateRecipeVideo(params, videoId),
+    ])
+      .then((result) => {
+        const oldVideos = result[0].data[0];
+        if (videos) {
+          if (params.video_file !== oldVideos.video_file) {
+            fs.unlink(`${oldVideos.video_file}`, (err) => {
+              if (err) {
+                console.log(err);
+                return;
+              } else {
+                console.log(`${oldVideos.video_file} deleted`);
+              }
+            });
+          }
+        }
+        if (!oldVideos) return res.status(404).json("data not found");
+
+        res.status(200).json(params);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).json(error);
+      });
+  },
+
+  deleteVideo: (req, res) => {
+    const params = req.body;
+    const { videoId } = req.params;
+    console.log(params);
+    Promise.all([
+      recipeModel.getRecipeVideoById(videoId),
+      recipeModel.deleteVideo(videoId),
+    ])
+      .then((result) => {
+        const videos = result[0].data[0];
+        const deleteVideos = result[1];
+        if (!videos) return res.status(404).json("data not found");
+
+        if (videos) {
+          if (deleteVideos) {
+            fs.unlink(`${videos.video_file}`, (err) => {
+              if (err) {
+                console.log(err);
+                return;
+              } else {
+                console.log(`${videos.video_file} deleted`);
+              }
+            });
+          }
+        }
+
+        res.status(200).json(videoId);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).json(error);
+      });
+  },
   //plan B
   b_addRecipe: (req, res) => {
     // const id_user = req.decodedToken.user_id
