@@ -22,6 +22,7 @@ module.exports = {
                     }
                 } else {
                     reject({
+                        status:1064,
                         msg: `SQLquery ERROR!`,
                         details: err
                     })
