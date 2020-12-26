@@ -113,14 +113,11 @@ module.exports = {
                                         resolve({
                                             status: 200,
                                             message: `Berhasil login`,
-<<<<<<< HEAD
                                             tokenId: token,
-                                            email: email
-=======
+                                            email: email,
                                             id_user:data[0].id_user,
                                             name: data[0].name,
                                             tokenId: token
->>>>>>> ebe8afac5ce0855ee54cf55673507e1a82fcc961
                                         })
                                     }else{
                                         reject({
