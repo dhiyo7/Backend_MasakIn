@@ -8,7 +8,7 @@ module.exports = {
         if (body.password != body.password_conf) {
             res.status(500).json({
                 status: 500,
-                message: `Password tidak sama!`
+                message: `Password not match!`
             })
         } else {
             authModel.signup(body)

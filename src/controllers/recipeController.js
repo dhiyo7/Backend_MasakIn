@@ -194,9 +194,24 @@ module.exports = {
   newRecipe: (req, res) => {
     recipeModel.Newest()
       .then((result) => {
-        res.status(200).json(result)
-      }).catch((error) => {
-        res.status(500).json(error)
+        res.status(200).json(result);
       })
+      .catch((error) => {
+        res.status(500).json(error);
+      });
+  },
+
+  // Popular
+  getRecipeByView: (req, res) => {
+    const decodeToken = req.decodedToken;
+    // console.log(req);
+    recipeModel
+      .getRecipeByView(decodeToken)
+      .then((result) => {
+        res.status(200).json(result);
+      })
+      .catch((error) => {
+        res.status(500).json(error);
+      });
   },
 };

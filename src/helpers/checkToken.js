@@ -16,7 +16,7 @@ module.exports = {
           } else {
             reject({
               status: 409,
-              msg: `Email telah digunakan!`,
+              msg: `Email already used!`,
             });
           }
         } else {
