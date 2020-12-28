@@ -3,3 +3,6 @@
 .eslintrc.json
 .env
 blanja.sql
+
+.yarn.lock
+.package-lock.json

@@ -6,9 +6,9 @@ const multiUpload = require("../helpers/upload");
 const checkToken = require ('./../helpers/checkToken')
 
 recipeRouter.get ('/', recipeController.getAllRecipes)
+recipeRouter.get('/views', checkToken.checkLogin, recipeController.getRecipeByView);
 recipeRouter.get('/:recipeId', recipeController.getRecipeById)
 recipeRouter.get('/video/:videoId',multiUpload, recipeController.getVideoById)
-recipeRouter.get('/views', checkToken.checkLogin, recipeController.getRecipeByView);
 recipeRouter.post('/add', checkToken.isLogin, multiUpload, recipeController.addRecipe)
 recipeRouter.post('/video',multiUpload, recipeController.addVideo)
 recipeRouter.put('/video/:videoId',multiUpload, recipeController.updateVideo)
