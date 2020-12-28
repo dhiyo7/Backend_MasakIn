@@ -104,7 +104,10 @@ const multiUpload = (req, res, next) => {
       });
     } else {
         console.log('next controller')
+<<<<<<< HEAD
         console.log(req.files)
+=======
+>>>>>>> 7e8501a37b21be01e3aed3d85e36c5d153429c14
       next();
     }
   });
