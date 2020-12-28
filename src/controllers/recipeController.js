@@ -202,6 +202,7 @@ module.exports = {
     ])
       .then((result) => {
         const oldVideos = result[0].data[0];
+        console.log(bodyUpdate, oldVideos)
         if (videos) {
           if (bodyUpdate.video_file !== oldVideos.video_file) {
             fs.unlink(`./public${oldVideos.video_file}`, (err) => {
@@ -216,7 +217,10 @@ module.exports = {
         }
         if (!oldVideos) return res.status(404).json("data not found");
 
-        res.status(200).json(bodyUpdate);
+        res.status(200).json({
+          message:`Berhasil di update`,
+          data: bodyUpdate
+        });
       })
       .catch((error) => {
         console.log(error);

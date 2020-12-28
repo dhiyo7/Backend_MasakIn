@@ -1,10 +1,7 @@
 const db = require('../config/mySQL')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-<<<<<<< HEAD
-=======
 const nodemailer = require('nodemailer')
->>>>>>> 7e8501a37b21be01e3aed3d85e36c5d153429c14
 
 module.exports = {
     signup: (body) => {
@@ -14,15 +11,9 @@ module.exports = {
             ...body,
             is_active: 0
         }
-<<<<<<< HEAD
-        return new Promise((resolve, reject) => {
-            //saltRounds
-            const saltRounds = Math.floor(Math.random() * 10) + 1
-=======
             return new Promise((resolve, reject) => {
             //saltRounds
             const saltRounds = Math.floor(Math.random() * 10) + 1;
->>>>>>> 7e8501a37b21be01e3aed3d85e36c5d153429c14
             //hash password
             bcrypt.hash(body.password, saltRounds, (err, hasedPassword) => {
                 const newUser = {
@@ -37,13 +28,6 @@ module.exports = {
                             email: body.email
                         }
                         const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: 1000 * 60 * 15 })
-<<<<<<< HEAD
-                        resolve({
-                            status: 200,
-                            message: `${body.email} telah berhasil mendaftar, silahkan login`,
-                            activateHere: `${process.env.HOSTNAME}/auth/activate_account/${token}`
-                        })
-=======
                         //Nodemailer: 
                         let transporter = nodemailer.createTransport({
                             service: 'gmail',
@@ -73,7 +57,6 @@ module.exports = {
                                 }
                             })
                         )
->>>>>>> 7e8501a37b21be01e3aed3d85e36c5d153429c14
                     } else {
                         reject({
                             status: 500,
@@ -130,14 +113,10 @@ module.exports = {
                                         resolve({
                                             status: 200,
                                             message: `Berhasil login`,
-<<<<<<< HEAD
-=======
                                             tokenId: token,
                                             email: email,
->>>>>>> 7e8501a37b21be01e3aed3d85e36c5d153429c14
                                             id_user:data[0].id_user,
                                             name: data[0].name,
-                                            tokenId: token
                                         })
                                     }else{
                                         reject({
@@ -183,12 +162,8 @@ module.exports = {
                         const tokenForgot = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: 1000 * 60 * 15 })
                         resolve({
                             status: 200,
-<<<<<<< HEAD
-                            message: `Here's your reset password Link : ${process.env.HOSTNAME}/auth/reset_password/${tokenForgot}`
-=======
                             email: email,
                             message: `${process.env.HOSTNAME}/auth/reset_password/${tokenForgot}`
->>>>>>> 7e8501a37b21be01e3aed3d85e36c5d153429c14
                         })
                     } else {
                         reject({
