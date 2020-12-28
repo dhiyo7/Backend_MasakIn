@@ -8,10 +8,16 @@ const checkToken = require ('./../helpers/checkToken')
 // hostname/recipe
 
 recipeRouter.get ('/', recipeController.getAllRecipes)
+<<<<<<< HEAD
+recipeRouter.get('/views', checkToken.checkLogin, recipeController.getRecipeByView);
+recipeRouter.get('/:recipeId', recipeController.getRecipeById)
+recipeRouter.get('/video/:videoId',multiUpload, recipeController.getVideoById)
+=======
 recipeRouter.get('/video/:videoId',multiUpload, recipeController.getVideoById)
 recipeRouter.get('/views', checkToken.checkLogin, recipeController.Popular); //popular
 recipeRouter.get('/new', recipeController.newRecipe)
 recipeRouter.get('/:recipeId', checkToken.isLogin , recipeController.getRecipeById) //perhatikan penempatan
+>>>>>>> 6aeec359c890443475fac745731e7ffd9ad01827
 recipeRouter.post('/add', checkToken.isLogin, multiUpload, recipeController.addRecipe)
 recipeRouter.patch('/update/:recipeId', checkToken.isLogin, multiUpload, recipeController.updateRecipe)
 recipeRouter.delete('/delete/:recipeId', checkToken.isLogin, recipeController.deleteRecipe)
