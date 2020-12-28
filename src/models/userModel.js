@@ -73,6 +73,18 @@ module.exports = {
             });
         });
     },
+    checkLike: (user_id, recipe_id) => {
+        return new Promise ((resolve, reject) => {
+            const queryStr = `SELECT * FROM tb_like_recipe WHERE user_id = ? AND recipe_id = ?`
+            db.query(queryStr, [user_id,recipe_id], (err, data) => {
+                if(!err){
+                    resolve(data)
+                }else{
+                    reject(err)
+                }
+            })
+        })
+    },
     removeLike: (user_id, recipe_id) => {
         return new Promise((resolve, reject) => {
             const queryStr = `DELETE FROM tb_like_recipe WHERE user_id = ? AND recipe_id = ?`;
@@ -145,6 +157,18 @@ module.exports = {
                 }
             });
         });
+    },
+    checkBookmark: (user_id, recipe_id) => {
+        return new Promise ((resolve, reject) => {
+            const queryStr = `SELECT * FROM tb_bookmark_recipe WHERE user_id = ? AND recipe_id = ?`
+            db.query(queryStr, [user_id,recipe_id], (err, data) => {
+                if(!err){
+                    resolve(data)
+                }else{
+                    reject(err)
+                }
+            })
+        })
     },
 
     removeBookmark: (user_id, recipe_id) => {

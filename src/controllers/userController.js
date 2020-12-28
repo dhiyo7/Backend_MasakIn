@@ -32,6 +32,16 @@ module.exports = {
                 res.status(error.status).json(error)
             })
     },
+    checkLike:(req, res) => {
+        const user_id = req.decodedToken.id_user
+        const {recipeId} = req.params
+        userModel.checkLike(user_id, recipeId)
+        .then((result) => {
+            res.json(result)
+        }).catch((error) => {
+            res.status(404).json(error)
+        })
+    },
     removeLike: (req, res) => {
         const user_id = req.decodedToken.id_user;
         const { recipeId } = req.params;
@@ -63,6 +73,16 @@ module.exports = {
             }).catch((error) => {
                 res.status(error.status).json(error)
             })
+    },
+    checkBookmark:(req, res) => {
+        const user_id = req.decodedToken.id_user
+        const {recipeId} = req.params
+        userModel.checkBookmark(user_id, recipeId)
+        .then((result) => {
+            res.json(result)
+        }).catch((error) => {
+            res.status(404).json(error)
+        })
     },
     removeBookmark: (req, res) => {
         const user_id = req.decodedToken.id_user;

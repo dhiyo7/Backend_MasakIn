@@ -59,6 +59,17 @@ module.exports = {
       })
       .catch((err) => res.status(500).json({ msg: err.message }));
   },
+  getCommentRecipe: (req, res) => {
+    const { recipeId } = req.params;
+    recipeModel
+      .getRecipeComment(recipeId)
+      .then((result) => {
+        res.status(200).json(result);
+      })
+      .catch((error) => {
+        res.status(error.status).json(error);
+      });
+  },
 
 
   //here

@@ -8,7 +8,6 @@ const checkToken = require ('./../helpers/checkToken')
 // hostname/recipe
 
 recipeRouter.get ('/', recipeController.getAllRecipes)
-recipeRouter.get('/newRecipe', recipeController.newRecipe)
 recipeRouter.get('/video/:videoId',multiUpload, recipeController.getVideoById)
 recipeRouter.get('/views', checkToken.checkLogin, recipeController.Popular); //popular
 recipeRouter.get('/new', recipeController.newRecipe)
@@ -20,7 +19,7 @@ recipeRouter.delete('/delete/:recipeId', checkToken.isLogin, recipeController.de
 //update delete video
 recipeRouter.post('/video/:recipeId', checkToken.isLogin, multiUpload, recipeController.addVideo)
 recipeRouter.put('/video/:videoId', checkToken.isLogin, multiUpload, recipeController.updateVideo)
-recipeRouter.delete('/video/:videoId', checkToken.isLogin, multiUpload, recipeController.deleteVideo)
+recipeRouter.delete('/video/:videoId', checkToken.isLogin, recipeController.deleteVideo)
 
 recipeRouter.get('/comment/:recipeId', checkToken.isLogin, recipeController.getCommentRecipe)
 // recipeRouter.delete('/delete/:recipeId', recipeController.deleteRecipe)

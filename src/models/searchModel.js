@@ -5,7 +5,7 @@ module.exports = {
     searchRecipe : (addQuery,urlQuery, total_result, page, offset, limit) => {
         return new Promise((resolve, reject) => {
             let qs = `SELECT id_recipe, title, img FROM tb_recipe ` + addQuery + `LIMIT ${limit} OFFSET ${offset} `
-            console.log(urlQuery)
+            // console.log(qs)
             db.query(qs, (err, data) => {
                 if (!err) {
                     if (data.length) {

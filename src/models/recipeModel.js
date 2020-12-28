@@ -252,7 +252,8 @@ module.exports = {
               data: data, //hhehe
             });
           } else {
-            resolve({
+            reject({
+              status:404,
               data: `No comment yet.`, //hhehe
             });
           }
@@ -280,7 +281,7 @@ module.exports = {
         `;
       } else {
         // console.log("Tidak ada user");
-        queryStr += `SELECT id_recipe, img, title, views FROM tb_recipe ORDER BY views DESC`;
+        queryStr += `SELECT id_recipe, img, title, views FROM tb_recipe ORDER BY views DESC LIMIT 6 OFFSET 0`;
       }
 
       // console.log(decodeToken);
