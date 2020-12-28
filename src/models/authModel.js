@@ -117,7 +117,6 @@ module.exports = {
                                             email: email,
                                             id_user:data[0].id_user,
                                             name: data[0].name,
-                                            tokenId: token
                                         })
                                     }else{
                                         reject({
