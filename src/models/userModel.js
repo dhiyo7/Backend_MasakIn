@@ -1,4 +1,3 @@
-const { query } = require("../config/mySQL");
 const db = require("../config/mySQL");
 
 module.exports = {
@@ -33,7 +32,7 @@ module.exports = {
                 if (!err) {
                     resolve({
                         status: 200,
-                        message: `Liked`,
+                        message: `Recipe ${recipe_id} has been liked`,
                         likedId: data.insertId,
                     });
                 } else {
@@ -93,7 +92,7 @@ module.exports = {
                 if (!err) {
                     resolve({
                         status: 200,
-                        message: `Removed from liked list`,
+                        message: `unliked`,
                     });
                 } else {
                     reject({
@@ -117,7 +116,7 @@ module.exports = {
                 if (!err) {
                     resolve({
                         status: 200,
-                        message: `Saved`,
+                        message: `Recipe ${recipe_id}  has been bookmarked`,
                         bookmarkId: data.insertId,
                     });
                 } else {
@@ -179,7 +178,7 @@ module.exports = {
                 if (!err) {
                     resolve({
                         status: 200,
-                        message: `Removed from saved recipe`,
+                        message: `unbookmark`,
                     });
                 } else {
                     reject({

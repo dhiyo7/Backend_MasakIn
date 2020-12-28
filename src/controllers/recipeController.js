@@ -2,11 +2,9 @@ const recipeModel = require("../models/recipeModel");
 const fs = require("fs");
 module.exports = {
   addRecipe: (req, res) => {
-    // const { user_id } = req.decodedToken
     const image = req.files.img;
     const videos = req.files.videos;
-    // console.log(videos);
-
+    console.log(videos);
     insert_recipe = {
       id_user: req.decodedToken.id_user,
       img: image.map((res) => '/images/' + res.filename),
@@ -20,9 +18,9 @@ module.exports = {
       .then((data) => {
         const successAdd = {
           msg: "Recipe added successfully",
+          id:data.insertId,
           data: { ...insert_recipe, videos: videos.map((res) => '/videos/' + res.filename) },
         };
-
         res.json(successAdd);
       })
       .catch((err) => {
@@ -73,6 +71,90 @@ module.exports = {
       });
   },
 
+
+  //here
+
+  updateRecipe: (req, res) => {
+    const { recipeId } = req.params
+    let { body } = req
+    if (req.files.img === undefined) {
+      console.log('tidak ada gambar')
+    } else {
+      body = {
+        ...body,
+        img: '/images/' + req.files.img[0].filename
+      }
+    }
+    recipeModel.updateRecipe(recipeId, body)
+      .then((result) => {
+        res.status(result.status).json({
+          ...result,
+          body
+        })
+      }).catch((error) => {
+        res.json(error.status).json(error)
+      })
+  },
+
+  deleteRecipe: (req, res) => {
+    const { recipeId } = req.params
+    Promise.all([
+      recipeModel.getImgToDelete(recipeId),
+      recipeModel.getVideoToDelete(recipeId),
+      recipeModel.deleteTblVideo(recipeId),
+      recipeModel.deleteRecipe(recipeId)
+    ])
+      .then((result) => {
+        const delImg = result[0].imgToDel[0]
+        const delVideo = result[1].videoToDel
+        if (result[3]) {
+          if (delImg) {
+            console.log(delImg)
+            fs.unlink(`./public${delImg.img}`, (err) => {
+              if (err) {
+                console.log(err);
+                return;
+              } else {
+                console.log(`${delImg.img} deleted`);
+              }
+            });
+          }
+        }
+        if (result[2]) {
+          if (delVideo) {
+            console.log(delVideo)
+            delVideo.map((video) => {
+              fs.unlink(`./public${video.video_file}`, (err) => {
+                if (err) {
+                  console.log(err);
+                  return; 
+                } else {
+                  console.log(`${video.video_file} deleted`);
+                }
+              });
+            })
+          }
+        }
+        res.status(200).json({
+          message: `berhasil dihapus`
+        })  
+      }).catch((error) => {
+        res.status(500).json(error)
+      })
+  },
+
+  getCommentRecipe: (req, res) => {
+    const { recipeId } = req.params;
+    recipeModel
+      .getRecipeComment(recipeId)
+      .then((result) => {
+        res.status(200).json(result);
+      })
+      .catch((error) => {
+        res.status(500).json(error);
+      });
+  },
+
   getVideoById: (req, res) => {
     const { videoId } = req.params;
     recipeModel
@@ -81,24 +163,31 @@ module.exports = {
         res.status(200).json(result.data[0]);
       })
       .catch((error) => {
-        console.log(error);
         res.status(500).json(error);
       });
   },
 
+  //tested
   addVideo: (req, res) => {
-    const params = req.body;
-    console.log(params);
-    const videos = req.files.videos;
-    if (videos) {
-      params.video_file = videos[0].path;
-    } else {
+    const { recipeId } = req.params
+    let bodyVideo;
+    if (req.files.videos === undefined) { //cannot read property of undefined
       res.status(500).json("videos required");
+    } else {
+      const videos = req.files.videos;
+      bodyVideo = {
+        recipe_id: recipeId,
+        video_title: videos[0].originalname.split('.')[0],
+        video_file: '/videos/' + videos[0].filename
+      }
     }
     recipeModel
-      .addRecipeVideo(params)
+      .addRecipeVideo(bodyVideo)
       .then((result) => {
-        res.status(200).json(result);
+        res.status(200).json({
+          message: `sukses menambahkan video baru`,
+          data: bodyVideo
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -106,23 +195,28 @@ module.exports = {
       });
   },
 
+  //tested
   updateVideo: (req, res) => {
-    const params = req.body;
     const { videoId } = req.params;
-    console.log(params);
     const videos = req.files.videos;
+    let bodyUpdate;
     if (videos) {
-      params.video_file = videos[0].path;
+      bodyUpdate = {
+        ...bodyUpdate,
+        video_title: videos[0].originalname.split('.')[0],
+        video_file: '/videos/' + videos[0].filename
+      }
     }
     Promise.all([
       recipeModel.getRecipeVideoById(videoId),
-      recipeModel.updateRecipeVideo(params, videoId),
+      recipeModel.updateRecipeVideo(bodyUpdate, videoId),
     ])
       .then((result) => {
         const oldVideos = result[0].data[0];
+        console.log(bodyUpdate, oldVideos)
         if (videos) {
-          if (params.video_file !== oldVideos.video_file) {
-            fs.unlink(`${oldVideos.video_file}`, (err) => {
+          if (bodyUpdate.video_file !== oldVideos.video_file) {
+            fs.unlink(`./public${oldVideos.video_file}`, (err) => {
               if (err) {
                 console.log(err);
                 return;
@@ -134,7 +228,10 @@ module.exports = {
         }
         if (!oldVideos) return res.status(404).json("data not found");
 
-        res.status(200).json(params);
+        res.status(200).json({
+          message:`Berhasil di update`,
+          data: bodyUpdate
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -142,10 +239,9 @@ module.exports = {
       });
   },
 
+  //tested
   deleteVideo: (req, res) => {
-    const params = req.body;
     const { videoId } = req.params;
-    console.log(params);
     Promise.all([
       recipeModel.getRecipeVideoById(videoId),
       recipeModel.deleteVideo(videoId),
@@ -154,21 +250,23 @@ module.exports = {
         const videos = result[0].data[0];
         const deleteVideos = result[1];
         if (!videos) return res.status(404).json("data not found");
-
         if (videos) {
           if (deleteVideos) {
-            fs.unlink(`${videos.video_file}`, (err) => {
+            fs.unlink(`./public${videos.video_file}`, (err) => {
               if (err) {
                 console.log(err);
                 return;
               } else {
-                console.log(`${videos.video_file} deleted`);
+                console.log(`./public${videos.video_file} deleted`);
               }
             });
           }
         }
 
-        res.status(200).json(videoId);
+        res.status(200).json({
+          message: `${videos.video_title} deleted`,
+          pathDeleted: videos.video_file
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -194,24 +292,9 @@ module.exports = {
   newRecipe: (req, res) => {
     recipeModel.Newest()
       .then((result) => {
-        res.status(200).json(result);
+        res.status(200).json(result)
+      }).catch((error) => {
+        res.status(500).json(error)
       })
-      .catch((error) => {
-        res.status(500).json(error);
-      });
-  },
-
-  // Popular
-  getRecipeByView: (req, res) => {
-    const decodeToken = req.decodedToken;
-    // console.log(req);
-    recipeModel
-      .getRecipeByView(decodeToken)
-      .then((result) => {
-        res.status(200).json(result);
-      })
-      .catch((error) => {
-        res.status(500).json(error);
-      });
   },
 };

@@ -4,7 +4,6 @@ module.exports = {
   addRecipe: (insert_product, videos) => {
     return new Promise((resolve, reject) => {
       const queryStr = "INSERT INTO tb_recipe SET ?";
-      console.log(insert_product);
       db.query(queryStr, insert_product, (err, data) => {
         if (!err) {
           let no = 1;
@@ -76,6 +75,87 @@ module.exports = {
         }
       });
     });
+  },
+
+  updateRecipe: (recipeId, updateData) => {
+    return new Promise ((resolve, reject) => {
+      const queryStr = `UPDATE tb_recipe SET ? WHERE id_recipe = ?`
+      db.query(queryStr, [updateData, recipeId], (err, data) => {
+        if(!err){
+          resolve({
+            status:200,
+            message:`update berhasil pada id ${recipeId}`
+          })
+        }else{
+          reject({
+            status:500,
+            message:`update Gagal`
+          })
+        }
+      })
+    })
+  },
+
+  deleteRecipe: (recipeId) => {
+    return new Promise ((resolve, reject) => {
+      const queryStr = `DELETE FROM tb_recipe WHERE id_recipe = ?`
+      db.query(queryStr, recipeId, (err, data) => {
+        if(!err){
+          resolve({
+            status:200,
+            message:`data berhasil dihapus`
+          })
+        }else{
+          reject({
+            status:500,
+            details:err
+          })
+        }
+      })
+    })
+  },
+
+  getImgToDelete: (recipeId) => {
+    return new Promise ((resolve, reject) => {
+      const queryStr = `SELECT img FROM tb_recipe WHERE id_recipe = ?`
+      db.query(queryStr, recipeId, (err,data) => {
+        if(!err){
+          resolve({
+            imgToDel: data
+          })
+        }else{
+          resolve(err)
+        }
+      })
+    })
+  },
+
+  getVideoToDelete: (recipeId) => {
+    return new Promise ((resolve, reject) => {
+      const queryStr = `SELECT video_file FROM pivot_video WHERE recipe_id = ?`
+      db.query(queryStr, recipeId, (err,data) => {
+        if(!err){
+          resolve({
+            videoToDel: data
+          })
+        }else{
+          resolve(err)
+        }
+      })
+    })
+  },
+
+  deleteTblVideo: (recipeId) => {
+    return new Promise ((resolve, reject) => {
+      const queryStr = `DELETE FROM pivot_video WHERE recipe_id = ?`
+      db.query(queryStr, recipeId, (err, data) => {
+        if(!err){
+          resolve(data)
+        }else{
+          resolve(err)
+        }
+      })
+    })
   },
 
   getRecipeVideoByIDRecipe: (recipeId) => {
