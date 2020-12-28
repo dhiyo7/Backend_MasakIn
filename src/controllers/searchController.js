@@ -43,29 +43,5 @@ module.exports = {
                 res.status(500).json(err)
             });
     },
-    popular: (req, res) => {
-        searchModel.Popular()
-            .then((result) => {
-                res.status(200).json(result)
-            }).catch((error) => {
-                res.status(500).json(error)
-            })
-    },
-    new: (req, res) => {
-        searchModel.Newest()
-            .then((result) => {
-                res.status(200).json(result)
-            }).catch((error) => {
-                res.status(500).json(error)
-            })
-    },
-    mostViewed: (req, res) => {
-        searchModel.mostViewed()
-            .then((result) => {
-                res.status(200).json(result)
-            }).catch((error) => {
-                res.status(500).json(error)
-            })
-    }
 
 };
