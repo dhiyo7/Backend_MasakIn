@@ -4,7 +4,6 @@ module.exports = {
   addRecipe: (insert_product, videos) => {
     return new Promise((resolve, reject) => {
       const queryStr = "INSERT INTO tb_recipe SET ?";
-      console.log(insert_product);
       db.query(queryStr, insert_product, (err, data) => {
         if (!err) {
           let no = 1;
@@ -121,7 +120,9 @@ module.exports = {
       const queryStr = `SELECT img FROM tb_recipe WHERE id_recipe = ?`
       db.query(queryStr, recipeId, (err,data) => {
         if(!err){
-          resolve(data)
+          resolve({
+            imgToDel: data
+          })
         }else{
           resolve(err)
         }
@@ -134,7 +135,9 @@ module.exports = {
       const queryStr = `SELECT video_file FROM pivot_video WHERE recipe_id = ?`
       db.query(queryStr, recipeId, (err,data) => {
         if(!err){
-          resolve(data)
+          resolve({
+            videoToDel: data
+          })
         }else{
           resolve(err)
         }
